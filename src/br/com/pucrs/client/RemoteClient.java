@@ -1,6 +1,5 @@
 package br.com.pucrs.client;
 
-import br.com.pucrs.remote.api.RemoteClientApi;
 import br.com.pucrs.remote.api.RemoteServerApi;
 
 import java.rmi.RemoteException;

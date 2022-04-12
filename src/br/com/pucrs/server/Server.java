@@ -12,8 +12,9 @@ public class Server {
     public static void main(String[] args) throws RemoteException, MalformedURLException, AlreadyBoundException {
        ServerOperations serverOperations = new ServerOperations();
 
-        LocateRegistry.createRegistry(1099);
+
+        /*LocateRegistry.createRegistry(1099);
         Naming.bind("Server", serverOperations);
-        System.out.println("Server UP");
+        System.out.println("Server UP");*/
     }
 }
