@@ -14,8 +14,9 @@ public class ServerOperations extends UnicastRemoteObject implements RemoteServe
     private Map<ClientConnection, ResourceInfo> connections;
     private HeartbeatValidation validation;
 
-    public ServerOperations() throws RemoteException {
+    public ServerOperations(HeartbeatValidation validation) throws RemoteException {
         this.connections = new HashMap<>();
+        this.validation = validation;
     }
 
 
@@ -26,6 +27,6 @@ public class ServerOperations extends UnicastRemoteObject implements RemoteServe
 
     @Override
     public boolean heartbeat(String connection) throws RemoteException {
-        return validation;
+        return true;
     }
 }
