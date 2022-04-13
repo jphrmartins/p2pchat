@@ -1,17 +1,12 @@
 package br.com.pucrs.client;
 
+import br.com.pucrs.remote.api.RemoteClientApi;
 import br.com.pucrs.remote.api.RemoteServerApi;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 public class RemoteClient extends UnicastRemoteObject implements RemoteClientApi {
