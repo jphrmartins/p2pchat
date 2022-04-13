@@ -1,5 +1,6 @@
 package br.com.pucrs.client;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -14,7 +15,6 @@ public class SocketClient extends Thread {
     String hash = "";
     String archive;
 
-    @lombok.SneakyThrows
     @Override
     public void run() {
         boolean aux=true;
@@ -45,8 +45,13 @@ public class SocketClient extends Thread {
         }catch (Exception e){
             System.out.println(e);
         }
-        outputStream.close();
-        inputStream.close();
-        socket.close();
+        try {
+            outputStream.close();
+            inputStream.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
