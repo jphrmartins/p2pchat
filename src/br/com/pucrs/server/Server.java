@@ -15,8 +15,8 @@ public class Server {
 
         heartbeatValidation.start(); // <- como a thread funciona aqui ó...
 
-        /*LocateRegistry.createRegistry(1099);
+        LocateRegistry.createRegistry(1099);
         Naming.bind("Server", serverOperations);
-        System.out.println("Server UP");*/
+        System.out.println("Server UP");
     }
 }

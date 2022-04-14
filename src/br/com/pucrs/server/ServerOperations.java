@@ -21,7 +21,7 @@ public class ServerOperations extends UnicastRemoteObject implements RemoteServe
 
 
     @Override
-    public List<String> listConnections() throws RemoteException {
+    public List<String> listResources() throws RemoteException {
         return new ArrayList<>();
     }
 
