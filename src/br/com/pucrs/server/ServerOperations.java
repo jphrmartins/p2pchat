@@ -1,32 +1,23 @@
 package br.com.pucrs.server;
 
-import br.com.pucrs.remote.api.RemoteServerApi;
-
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class ServerOperations extends UnicastRemoteObject implements RemoteServerApi {
+public class ServerOperations extends Thread {
 
-    private Map<ClientConnection, ResourceInfo> connections;
-    private HeartbeatValidation validation;
-
-    public ServerOperations(HeartbeatValidation validation) throws RemoteException {
-        this.connections = new HashMap<>();
-        this.validation = validation;
-    }
+    private Map<PeerConnection, Integer> heartBeats;
 
 
-    @Override
-    public List<String> listResources() throws RemoteException {
-        return new ArrayList<>();
+    public ServerOperations() {
+        this.heartBeats = new HashMap<>();
     }
 
     @Override
-    public boolean heartbeat(String connection) throws RemoteException {
-        return true;
+    public void run() {
+        while (true) {
+            heartBeats.forEach((peerConnection, integer) -> {
+                heartBeats.put(peerConnection, integer-1);
+            });
+        }
     }
 }

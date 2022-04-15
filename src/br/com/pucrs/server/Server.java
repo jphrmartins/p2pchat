@@ -10,10 +10,10 @@ public class Server {
 
 
     public static void main(String[] args) throws RemoteException, MalformedURLException, AlreadyBoundException {
-        HeartbeatValidation heartbeatValidation = new HeartbeatValidation();
-        ServerOperations serverOperations = new ServerOperations(heartbeatValidation);
+        ServerOperationsApi serverOperations = new ServerOperationsApi();
 
-        heartbeatValidation.start(); // <- como a thread funciona aqui ó...
+        Thread heartBeat = new Thread(serverOperations);
+        heartBeat.start();
 
         LocateRegistry.createRegistry(1099);
         Naming.bind("Server", serverOperations);

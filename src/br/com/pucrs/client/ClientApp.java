@@ -15,7 +15,7 @@ public class ClientApp {
         }
         RemoteServerApi remoteServerApi = (RemoteServerApi) Naming.lookup("//" + args[0] + ":" + args[1] + "/Server");
 
-        ArchiveRpository archiveRpository = new ArchiveRpository(".")
+        ArchiveRpository archiveRpository = new ArchiveRpository(".");
         SocketClient socketClient = new SocketClient(archiveRpository);
         socketClient.start();
         while (!socketClient.isConnected()) {

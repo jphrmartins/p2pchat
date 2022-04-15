@@ -1,12 +1,15 @@
 package br.com.pucrs.server;
 
-public class ClientConnection {
+public class PeerConnection {
     private final String address;
     private final String port;
 
-    public ClientConnection(String address, String port) {
+    private final String userName;
+
+    public PeerConnection(String address, String port, String userName) {
         this.address = address;
         this.port = port;
+        this.userName = userName;
     }
 
     public String getAddress() {
@@ -15,5 +18,9 @@ public class ClientConnection {
 
     public String getPort() {
         return port;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 }

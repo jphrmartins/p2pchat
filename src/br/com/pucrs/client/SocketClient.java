@@ -1,8 +1,6 @@
 package br.com.pucrs.client;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -20,6 +18,9 @@ public class SocketClient extends Thread {
     }
 
     @Override
+    //@Todo @JU
+    // Validar se isso aqui vai ficar esperando uma conexão...
+    // da um bizu aqui https://www.codejava.net/java-se/networking/java-socket-client-examples-tcp-ip
     public void run() {
         boolean aux = true;
 
@@ -36,14 +37,14 @@ public class SocketClient extends Thread {
         }
         System.out.println("Connect on port " + port);
         connected = true;
-        ObjectOutputStream outputStream = null;
-        ObjectInputStream inputStream = null;
+        OutputStream outputStream = null;
+        BufferedReader inputStream = null;
         try {
-            String archiveContent = "";
-            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            byte[] archiveContent = new byte[0];
+            outputStream = socket.getOutputStream();
             outputStream.flush();
-            inputStream = new ObjectInputStream(socket.getInputStream());
-            String hash = (String) inputStream.readObject(); // <hashcode> <- pattern
+            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String hash = inputStream.readLine(); // <hashcode> <- pattern
 
             try {
                 archiveContent = getFile(hash);
@@ -51,8 +52,8 @@ public class SocketClient extends Thread {
                 e.printStackTrace();
             }
 
-            if (archiveContent != null) {
-                outputStream.writeObject(archiveContent);
+            if (archiveContent.length > 0) {
+                outputStream.write(archiveContent);
                 outputStream.flush();
             } else {
                 outputStream.flush();
@@ -80,7 +81,7 @@ public class SocketClient extends Thread {
         return connected;
     }
 
-    private String getFile(String hash) {
+    private byte[] getFile(String hash) {
         return this.archiveRpository.getFileContent(hash);
     }
 }

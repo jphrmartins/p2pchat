@@ -1,43 +1,53 @@
 package br.com.pucrs.client;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class ArchiveRpository {
-    private final Map<String, String> hashCodes;
+    private final Map<String, byte[]> hashCodes;
 
     public ArchiveRpository(String directoryToRead) {
         this.hashCodes = readArchives(directoryToRead);
     }
 
-    private Map<String, String> readArchives(String directory) {
-        Map<String, String> hashCodes = new HashMap<>();
+    public byte[] getFileContent(String hash) {
+        return hashCodes.get(hash);
+    }
+
+    private Map<String, byte[]> readArchives(String directory) {
+
+        Map<String, byte[]> hashCodes = new HashMap<>();
         File dir = new File(directory);
         File[] files = Objects.requireNonNull(dir.listFiles());
-        StringBuilder message = new StringBuilder();
         for (File file : files) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    message.append(line);
-                }
+            try {
+                byte[] content = Files.readAllBytes(file.toPath());
+                hashCodes.put(md5(content), content);
             } catch (IOException e) {
                 System.err.println("Error while reading archive. " + e);
             }
-
-            hashCodes.put("" + message.toString().hashCode(), message.toString()); //Todo hash tem que ser md5
-            message = new StringBuilder();
         }
         return hashCodes;
     }
 
-    public String getFileContent(String hash) {
-        return hashCodes.get(hash);
-    }
 
+    private String md5(byte[] content) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] hashedContent = md.digest(content);
+            StringBuilder hexHash = new StringBuilder();
+            for (byte bte : hashedContent) {
+                hexHash.append(Integer.toHexString(0xFF & bte));
+            }
+            return hexHash.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
