@@ -14,8 +14,6 @@ public interface RemoteServerApi extends Remote {
 
     ClientConnection getConnection(String peerName)  throws RemoteException;
 
-
     boolean heartbeat(String connection) throws RemoteException;
 
 }
-//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
