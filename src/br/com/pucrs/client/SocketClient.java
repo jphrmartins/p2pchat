@@ -40,23 +40,26 @@ public class SocketClient extends Thread {
         OutputStream outputStream = null;
         BufferedReader inputStream = null;
         try {
-            byte[] archiveContent = new byte[0];
-            outputStream = socket.getOutputStream();
-            outputStream.flush();
-            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String hash = inputStream.readLine(); // <hashcode> <- pattern
-
-            try {
-                archiveContent = getFile(hash);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            if (archiveContent.length > 0) {
-                outputStream.write(archiveContent);
+            while (true){
+                // @Todo tavez precise de uma condicao de parada? Acho que nao, ja que se encerrar o server tudo para
+                byte[] archiveContent = new byte[0];
+                outputStream = socket.getOutputStream();
                 outputStream.flush();
-            } else {
-                outputStream.flush();
+                inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String hash = inputStream.readLine(); // <hashcode> <- pattern
+
+                try {
+                    archiveContent = getFile(hash);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (archiveContent.length > 0) {
+                    outputStream.write(archiveContent);
+                    outputStream.flush();
+                } else {
+                    outputStream.flush();
+                }
             }
 
         } catch (Exception e) {
