@@ -41,7 +41,6 @@ public class SocketClient extends Thread {
         BufferedReader inputStream = null;
         try {
             while (true){
-                // @Todo tavez precise de uma condicao de parada? Acho que nao, ja que se encerrar o server tudo para
                 byte[] archiveContent = new byte[0];
                 outputStream = socket.getOutputStream();
                 outputStream.flush();
