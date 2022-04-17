@@ -1,4 +1,4 @@
-package br.com.pucrs.server;
+package br.com.pucrs.remote.api;
 
 public class PeerConnection {
     private final String address;
@@ -22,5 +22,14 @@ public class PeerConnection {
 
     public String getUserName() {
         return userName;
+    }
+
+    @Override
+    public String toString() {
+        return "PeerConnection{" +
+                "address='" + address + '\'' +
+                ", port='" + port + '\'' +
+                ", userName='" + userName + '\'' +
+                '}';
     }
 }

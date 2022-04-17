@@ -1,4 +1,4 @@
-package br.com.pucrs.server;
+package br.com.pucrs.remote.api;
 
 public class ResourceInfo {
     private final String fileName;

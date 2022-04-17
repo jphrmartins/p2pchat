@@ -1,41 +1,49 @@
 package br.com.pucrs.client;
 
+import br.com.pucrs.remote.api.ResourceInfo;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ArchiveRpository {
-    private final Map<String, byte[]> hashCodes;
+    private final Map<String, ArchiveContent> hashCodes;
 
     public ArchiveRpository(String directoryToRead) {
         this.hashCodes = readArchives(directoryToRead);
     }
 
     public byte[] getFileContent(String hash) {
-        return hashCodes.get(hash);
+        return hashCodes.get(hash).getContent();
     }
 
-    private Map<String, byte[]> readArchives(String directory) {
+    public List<ResourceInfo> getAllResources() {
+        return hashCodes.entrySet().stream()
+                .map(it -> new ResourceInfo(it.getValue().getName(), it.getKey()))
+                .collect(Collectors.toList());
+    }
 
-        Map<String, byte[]> hashCodes = new HashMap<>();
+    private Map<String, ArchiveContent> readArchives(String directory) {
+        Map<String, ArchiveContent> hashCodes = new HashMap<>();
         File dir = new File(directory);
         File[] files = Objects.requireNonNull(dir.listFiles());
         for (File file : files) {
             try {
                 byte[] content = Files.readAllBytes(file.toPath());
-                hashCodes.put(md5(content), content);
+                hashCodes.put(md5(content), new ArchiveContent(file.getName(), content));
             } catch (IOException e) {
                 System.err.println("Error while reading archive. " + e);
             }
         }
         return hashCodes;
     }
-
 
     private String md5(byte[] content) {
         try {

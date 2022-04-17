@@ -1,14 +1,16 @@
 package br.com.pucrs.server;
 
+import br.com.pucrs.remote.api.PeerConnection;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServerOperations extends Thread {
+public class ServerHeartbeat extends Thread {
 
     private Map<PeerConnection, Integer> heartBeats;
 
 
-    public ServerOperations() {
+    public ServerHeartbeat() {
         this.heartBeats = new HashMap<>();
     }
 

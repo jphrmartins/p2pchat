@@ -1,6 +1,8 @@
 package br.com.pucrs.server;
 
+import br.com.pucrs.remote.api.PeerConnection;
 import br.com.pucrs.remote.api.RemoteServerApi;
+import br.com.pucrs.remote.api.ResourceInfo;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -18,14 +20,15 @@ public class ServerOperationsApi extends UnicastRemoteObject implements RemoteSe
     }
 
     @Override
-    public Set<ResourceInfo> listResources() throws RemoteException {
-        return getUniqueResources();
+    public Set<ResourceInfo> listResources(PeerConnection peerConnection) throws RemoteException {
+        return getUniqueResources(peerConnection);
 
     }
 
     @Override
-    public List<ResourceInfo> search(String name) throws RemoteException {
-        return getUniqueResources().stream()
+    public List<ResourceInfo> search(PeerConnection peerConnection,
+                                                           String name) throws RemoteException {
+        return getUniqueResources(peerConnection).stream()
                 .filter(it -> it.getFileName().startsWith(name))
                 .collect(Collectors.toList());
     }
@@ -68,8 +71,12 @@ public class ServerOperationsApi extends UnicastRemoteObject implements RemoteSe
         }
     }
 
-    private Set<ResourceInfo> getUniqueResources() {
-        return connections.values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
+    private Set<ResourceInfo> getUniqueResources(PeerConnection peerConnection) {
+        return connections.entrySet()
+                .stream()
+                .filter(it -> it.getKey() != peerConnection)
+                .flatMap(it -> it.getValue().stream())
+                .collect(Collectors.toSet());
     }
 
     private void removeConnection(PeerConnection peerConnection) {

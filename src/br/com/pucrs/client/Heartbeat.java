@@ -1,34 +1,28 @@
-import br.com.pucrs.remote.api.RemoteServerApi;
+package br.com.pucrs.client;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import br.com.pucrs.remote.api.RemoteServerApi;
+import br.com.pucrs.remote.api.PeerConnection;
+
+import java.rmi.RemoteException;
 
 public class Heartbeat extends Thread {
-    protected String addr = null;
-    protected byte[] data = new byte[1024];
-    protected int port;
-    private RemoteServerApi remoteServerApi;
+    private final PeerConnection peerConnection;
+    private final RemoteServerApi remoteServerApi;
 
-    public Heartbeat(RemoteServerApi remoteServerApi, String addr, int port) throws UnknownHostException {
+    public Heartbeat(RemoteServerApi remoteServerApi, PeerConnection peerConnection) {
         this.remoteServerApi = remoteServerApi;
-        data = ("heartbeat " + InetAddress.getLocalHost().getHostAddress()).getBytes();
-        this.addr = addr;
-        this.port = port;
+        this.peerConnection = peerConnection;
     }
 
     public void run() {
         while (true) {
             try {
-
-            } catch (Exception e) {
-            }
-
-            try {
+                System.out.println("pulse heartbeat");
+                remoteServerApi.heartbeat(peerConnection);
                 Thread.sleep(3000);
-            } catch(InterruptedException e) {
+            } catch (RemoteException | InterruptedException e) {
+                throw new RuntimeException(e);
             }
-//			System.out.println("\npulse!");
         }
     }
 }

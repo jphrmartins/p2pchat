@@ -1,8 +1,5 @@
 package br.com.pucrs.remote.api;
 
-import br.com.pucrs.server.PeerConnection;
-import br.com.pucrs.server.ResourceInfo;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -11,9 +8,9 @@ import java.util.Set;
 
 public interface RemoteServerApi extends Remote {
 
-    Set<ResourceInfo> listResources() throws RemoteException;
+    Set<ResourceInfo> listResources(PeerConnection peerConnection) throws RemoteException;
 
-    List<ResourceInfo> search(String name) throws RemoteException;
+    List<ResourceInfo> search(PeerConnection peerConnection, String name) throws RemoteException;
 
     Optional<PeerConnection> getConnection(String peerName) throws RemoteException;
 

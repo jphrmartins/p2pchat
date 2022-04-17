@@ -1,6 +1,7 @@
 package br.com.pucrs.client;
 
 import br.com.pucrs.remote.api.RemoteServerApi;
+import br.com.pucrs.remote.api.PeerConnection;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -10,11 +11,11 @@ import java.rmi.RemoteException;
 public class ClientApp {
 
     public static void main(String[] args) throws MalformedURLException, NotBoundException, RemoteException, InterruptedException {
-        if (args.length <= 1) {
-            System.out.println("Must pass the server host and port of the central server");
+        if (args.length != 4) {
+            System.out.println("Must pass the current name, localId, ServerIp and ServerPort");
+            System.out.println("Java ClientApp <userName> <LocalId> <ServerIp> <ServerPort>");
         }
-        RemoteServerApi remoteServerApi = (RemoteServerApi) Naming.lookup("//" + args[0] + ":" + args[1] + "/Server");
-
+        RemoteServerApi remoteServerApi = (RemoteServerApi) Naming.lookup("//" + args[2] + ":" + args[3] + "/Server");
         ArchiveRpository archiveRpository = new ArchiveRpository(".");
         SocketClient socketClient = new SocketClient(archiveRpository);
         socketClient.start();
@@ -22,7 +23,12 @@ public class ClientApp {
             Thread.sleep(2000);
             System.out.println("Still not connect will sleep a little");
         }
-        PeerClient client = new PeerClient(remoteServerApi, socketClient.getPort());
+        String username = args[0];
+        String currentIpAddress = args[1];
+        int port = socketClient.getPort();
+        PeerConnection peerConnection = new PeerConnection(currentIpAddress, Integer.toString(port), username);
+        Heartbeat heartbeat = new Heartbeat(remoteServerApi, peerConnection);
+        PeerClient client = new PeerClient(remoteServerApi, peerConnection, heartbeat, archiveRpository);
 
         client.start();
     }
