@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Server.Dockerfile
+    networks:
+      - backend
+
+  client1:
+    build:
+      context: .
+      dockerfile: Client.Dockerfile
+    depends_on:
+      server:
+        condition: service_started
+    environment:
+      USERNAME: Cliente1
+      LOCALIP: http://host.docker.internal
+      SERVERIP: 127.0.0.1
+      SERVERPORT: 1099
+      DIRECTORY: ~/recursos
+    networks:
+      - backend
+
+  client2:
+    build:
+      context: .
+      dockerfile: Client.Dockerfile
+    depends_on:
+      server:
+        condition: service_started
+    environment:
+      USERNAME: Cliente2
+      LOCALIP: http://host.docker.internal
+      SERVERIP: 127.0.0.1
+      SERVERPORT: 1099
+      DIRECTORY: ~/recursos
+    networks:
+      - backend
+networks:
+  backend: {}

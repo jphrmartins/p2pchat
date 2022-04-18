@@ -53,7 +53,7 @@ public class SocketClientRequest {
 
             try {
                 Writer writer = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(archiveRpository.getDirectory() + "\\" + archive + ".txt"), "utf-8"));
+                        new FileOutputStream(archiveRpository.getDirectory() + "\\" + resourceName + ".txt"), "utf-8"));
                 writer.write(archive);
                 System.out.println("File received and saved successfully");
 
