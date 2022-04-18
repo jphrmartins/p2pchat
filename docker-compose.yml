@@ -16,11 +16,11 @@ services:
       server:
         condition: service_started
     environment:
-      USERNAME: Cliente1
-      LOCALIP: http://host.docker.internal
-      SERVERIP: 127.0.0.1
-      SERVERPORT: 1099
-      DIRECTORY: ~/recursos
+      - 1=Cliente1
+      - 2=client1
+      - 3=server
+      - 4=1099
+      - 5=/resources
     networks:
       - backend
 
@@ -32,12 +32,13 @@ services:
       server:
         condition: service_started
     environment:
-      USERNAME: Cliente2
-      LOCALIP: http://host.docker.internal
-      SERVERIP: 127.0.0.1
-      SERVERPORT: 1099
-      DIRECTORY: ~/recursos
+      - USERNAME=Cliente2
+      - 2=client2
+      - 3=server
+      - 4=1099
+      - 5=/resources
     networks:
       - backend
+
 networks:
   backend: {}

@@ -24,7 +24,7 @@ public class PeerClient {
         this.peerConnection = peerConnection;
     }
 
-    //Só aviso mesmo -> não é thread, roda na main.
+    //So aviso mesmo -> nao e thread, roda na main.
     public void start() throws RemoteException {
         System.out.println("Client will start running on " + peerConnection);
         boolean connected = connectOnRemoteServer();
@@ -113,10 +113,10 @@ public class PeerClient {
                     .map(it -> it.getFileName() + " " + it.getHash())
                     .collect(Collectors.joining(",\n"));
 
-            System.out.println("lista de todos os recursos disponível em rede: ");
+            System.out.println("lista de todos os recursos disponivel em rede: ");
             System.out.println(allResources);
         } else {
-            System.out.println("Nenhum recurso disponível");
+            System.out.println("Nenhum recurso disponivel");
         }
     }
 
@@ -126,11 +126,11 @@ public class PeerClient {
         List<String> peerUserNames = remoteServerApi.getPeerNamesForResource(peerConnection, resourceName);
 
         if (!peerUserNames.isEmpty()) {
-            System.out.println("Segue lista de usuários que possui o recurso: " + resourceName);
+            System.out.println("Segue lista de usuarios que possui o recurso: " + resourceName);
             String users = String.join(",\n", peerUserNames);
             System.out.println(users);
         } else {
-            System.out.println("Nenhum peer disponível para esse recurso");
+            System.out.println("Nenhum peer disponivel para esse recurso");
         }
     }
 
