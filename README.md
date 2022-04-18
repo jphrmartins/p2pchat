@@ -2,7 +2,7 @@
 
 ## Integrates:
 - João Pedro Martins
-- Julia 
+- Julia Makowski
 
 ### Só quero rodar isso aqui. o que eu faço:
 
