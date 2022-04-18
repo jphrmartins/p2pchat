@@ -19,10 +19,6 @@ public class SocketClientListener extends Thread {
         this.address = address;
     }
 
-    @Override
-    //@Todo @JU
-    // Validar se isso aqui vai ficar esperando uma conexão...
-    // da um bizu aqui https://www.codejava.net/java-se/networking/java-socket-client-examples-tcp-ip
     public void run() {
         boolean aux = true;
 

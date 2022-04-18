@@ -41,23 +41,6 @@ public class PeerClient {
         return remoteServerApi.connect(peerConnection, resourceInfos);
     }
 
-    /*@Todo Terminar o tratamento aqui
-    //Todo o 1 e 2 deixa que eu faço..
-    //todo ideia do fluxo ideial:
-    *    Me conecto com o servidor, mando meus arquivos pra la
-    *    Pergunto pra fazer a pesquisa do arquivo x
-    *    Servidor me devolve todos os arquivos que ele encontrou com o padrão x
-    *    Pergunto pro servidor todos que tem todos os peers que tem o hash
-    *    Servidor devolve o username dos peer que tem o hash
-    *    Escolho um peer,
-            solicito ao servidor os dados de coneção do peer escolhido.
-            servidor devolve peerConection com host e port.
-            Abro socket com o peer.
-            Mando o hash por parametro
-            recebo arquivo.
-         Fim
-    *
-    */
     public void menu() throws RemoteException {
         int opt;
 
@@ -169,11 +152,6 @@ public class PeerClient {
         } else {
             System.out.println("Client " + username + " does not exists");
         }
-        /*@Todo contatar outro peer, deve ser passado o ip e a porta do peer e o hashcode do recurso que desejamos receber
-        / passo é... dizer quem é o peer vai contatar (não o ip o username mesmo) Comando pode ser (3 julia hash)
-        / buscar no servidor a connection pra aquele peer.
-        / Abrir conexão pro peer e solicitar o hash
-         */
     }
 
 }
