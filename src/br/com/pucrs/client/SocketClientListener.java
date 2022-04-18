@@ -63,6 +63,8 @@ public class SocketClientListener extends Thread {
                 } else {
                     outputStream.flush();
                 }
+                System.out.println("Completed send the archive from the hash code " + hash);
+                socket.close();
             }
         } catch (Exception e) {
             e.printStackTrace();

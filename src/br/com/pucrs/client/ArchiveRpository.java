@@ -15,9 +15,11 @@ import java.util.stream.Collectors;
 
 public class ArchiveRpository {
     private final Map<String, ArchiveContent> hashCodes;
+    private String directory;
 
     public ArchiveRpository(String directoryToRead) {
         this.hashCodes = readArchives(directoryToRead);
+        this.directory = directoryToRead;
     }
 
     public byte[] getFileContent(String hash) {
@@ -57,5 +59,9 @@ public class ArchiveRpository {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String getDirectory() {
+        return directory;
     }
 }

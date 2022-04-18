@@ -2,19 +2,20 @@ package br.com.pucrs.client;
 
 import br.com.pucrs.remote.api.PeerConnection;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class SocketClientRequest {
     private int port = 5001;
     private Socket socket;
     private final PeerConnection connection;
+    private ArchiveRpository archiveRpository;
 
-    public SocketClientRequest(PeerConnection connection) {
+    public SocketClientRequest(PeerConnection connection, ArchiveRpository archiveRpository) {
         this.connection = connection;
+        this.archiveRpository = archiveRpository;
     }
 
     public void getArchive(String hashcode, String resourceName) {
@@ -48,11 +49,17 @@ public class SocketClientRequest {
             }
 
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String hash = inputStream.readLine(); // <archieveContent> <- pattern
+            String archive = inputStream.readLine(); // <archiveContent> <- pattern
 
-            //@Todo salvar o arquivo ou so ler ele, talvez tenha que passar o nome do arquivo sozinho
+            try {
+                Writer writer = new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream(archiveRpository.getDirectory() + "\\" + archive + ".txt"), "utf-8"));
+                writer.write(archive);
+                System.out.println("File received and saved successfully");
 
-
+            }catch (Exception ignored){
+                System.out.println("There were problems receiving the file");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
