@@ -15,9 +15,9 @@ public class ClientApp {
             System.out.println("Must pass the current name, localId, ServerIp and ServerPort");
             System.out.println("Java ClientApp <userName> <LocalId> <ServerIp> <ServerPort> <directoryOfFile>");
         }
-        RemoteServerApi remoteServerApi = (RemoteServerApi) Naming.lookup("//" + System.getenv("3") + ":" + System.getenv("4") + "/Server");
-        ArchiveRpository archiveRpository = new ArchiveRpository(System.getenv("5"));
-        String currentIpAddress = System.getenv("2");
+        RemoteServerApi remoteServerApi = (RemoteServerApi) Naming.lookup("//" + args[3] + ":" + args[4] + "/Server");
+        ArchiveRpository archiveRpository = new ArchiveRpository(args[5]);
+        String currentIpAddress = args[2];
         SocketClientListener socketClientListener = new SocketClientListener(archiveRpository, currentIpAddress);
         socketClientListener.start();
         while (!socketClientListener.isConnected()) {
@@ -25,7 +25,7 @@ public class ClientApp {
             Thread.sleep(2000);
         }
         System.out.println("Connected");
-        String username = System.getenv("1");
+        String username = args[1];
         int port = socketClientListener.getPort();
         PeerConnection peerConnection = new PeerConnection(currentIpAddress, Integer.toString(port), username);
         Heartbeat heartbeat = new Heartbeat(remoteServerApi, peerConnection);

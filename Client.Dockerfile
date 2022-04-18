@@ -24,4 +24,4 @@ COPY . .
 
 WORKDIR out/
 
-CMD ["java", "br.com.pucrs.client.ClientApp", "$1", "$2", "$3", "$4", "$5"]
+CMD ["java", "br.com.pucrs.client.ClientApp", ${1}, ${2}, ${3}, ${4}, ${5}]
