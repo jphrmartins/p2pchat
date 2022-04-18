@@ -164,7 +164,7 @@ public class PeerClient {
         Optional<PeerConnection> peer = remoteServerApi.getConnection(username);
 
         if (peer.isPresent()) {
-            SocketClientRequest socketClientRequest = new SocketClientRequest(peer.get());
+            SocketClientRequest socketClientRequest = new SocketClientRequest(peer.get(), archiveRpository);
             socketClientRequest.getArchive(hashcode,resouceName);
         } else {
             System.out.println("Client " + username + " does not exists");

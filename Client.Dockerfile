@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM openjdk:12-ea-13-jdk-oraclelinux7
 COPY . .
-CMD build.bat
+CMD ./build
 COPY . .
-CMD runClient.bat $USERNAME $LOCALIP $SERVERIP $SERVERPORT $DIRECTORY
+CMD ./runClient $USERNAME $LOCALIP $SERVERIP $SERVERPORT $DIRECTORY
