@@ -15,7 +15,6 @@ public class PeerClient {
     private final PeerConnection peerConnection;
     private final Scanner input;
     private final ArchiveRpository archiveRpository;
-    private SocketClientRequest socketClientRequest;
 
     protected PeerClient(RemoteServerApi remoteServerApi, PeerConnection peerConnection,
                          Heartbeat heartbeat, ArchiveRpository archiveRpository) {
@@ -68,16 +67,17 @@ public class PeerClient {
             System.out.print("##--               Menu              --##\n\n");
             System.out.print("|---------------------------------------|\n");
             System.out.print("| 1 - Request resource list             |\n");
-            System.out.print("| 2 - Request resource from server      |\n");
-            System.out.print("| 3 - Contact other peer                |\n");
-            System.out.print("| 4 - Exit                              |\n");
+            System.out.print("| 2 - Request resource list             |\n");
+            System.out.print("| 3 - Request resource from server      |\n");
+            System.out.print("| 4 - Contact other peer                |\n");
+            System.out.print("| 5 - Exit                              |\n");
             System.out.print("|---------------------------------------|\n");
 
             opt = input.nextInt();
 
             switch (opt) {
                 case 1:
-                    requestResources();
+                    requestResourcesList();
                     System.out.println("");
                     break;
                 case 2:
@@ -85,22 +85,37 @@ public class PeerClient {
                     break;
                 case 3:
                     break;
-                case 4:
-                    System.exit(0);
+                case 5:
+                    System.out.println("Disconectando cliente");
+                    disconnect();
+                    break;
+                default:
+                    System.out.println();
+                    break;
             }
-        } while (opt != 4);
+        } while (opt != 5);
     }
 
-    public String requestResourcesList() throws RemoteException {
-        return remoteServerApi.listResources(peerConnection).stream()
+    private void disconnect() {
+        remoteServerApi.disconnect()
+    }
+
+    public void requestResourcesList() throws RemoteException {
+        String allResources = remoteServerApi.listResources(peerConnection).stream()
                 .map(it -> it.getFileName() + " " + it.getHash())
                 .collect(Collectors.joining(",\n"));
+
+        System.out.println("lista de todos os recursos disponível em rede: ");
+        System.out.println(allResources);
     }
 
-    public String requestResources() throws RemoteException {
+    public void requestResources() throws RemoteException {
         System.out.println("Enter the resource name: ");
-        List<String> peerUserNames = remoteServerApi.getPeerNamesForResource(input.next());
-        return String.join(",\n", peerUserNames);
+        String resourceName = input.next();
+        List<String> peerUserNames = remoteServerApi.getPeerNamesForResource(resourceName);
+        System.out.println("Segue lista de usuários que possui o recurso :" + resourceName);
+        String users = String.join(",\n", peerUserNames);
+        System.out.println(users);
     }
 
     public void contactOtherPeer() throws RemoteException {
@@ -113,10 +128,14 @@ public class PeerClient {
         System.out.println("Enter the hash code of the resource: ");
         hashcode = input.next();
 
-        socketClientRequest = new SocketClientRequest(remoteServerApi.getConnection(username));
+        Optional<PeerConnection> peer = remoteServerApi.getConnection(username);
 
-        socketClientRequest.getArchieve(hashcode,resouceName);
-
+        if (peer.isPresent()) {
+            SocketClientRequest socketClientRequest = new SocketClientRequest(peer.get());
+            socketClientRequest.getArchieve(hashcode,resouceName);
+        } else {
+            System.out.println("Client " + username + " does not exists");
+        }
         /*@Todo contatar outro peer, deve ser passado o ip e a porta do peer e o hashcode do recurso que desejamos receber
         / passo é... dizer quem é o peer vai contatar (não o ip o username mesmo) Comando pode ser (3 julia hash)
         / buscar no servidor a connection pra aquele peer.

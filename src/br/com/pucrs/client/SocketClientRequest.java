@@ -13,10 +13,9 @@ import java.util.Optional;
 public class SocketClientRequest {
     private int port = 5001;
     private Socket socket;
-    private Optional<PeerConnection> connection;
+    private final PeerConnection connection;
 
-
-    public SocketClientRequest(Optional<PeerConnection> connection) {
+    public SocketClientRequest(PeerConnection connection) {
         this.connection = connection;
     }
 
@@ -27,7 +26,7 @@ public class SocketClientRequest {
             aux = false;
             try {
                 System.out.println("Will try to connect on port " + port );
-                socket = new Socket(connection.get().getAddress(), port);
+                socket = new Socket(connection.getAddress(), port);
             } catch (Exception ignore) {
                 System.out.println("Port " + port + " Already on use, will try next");
                 aux = true;

@@ -11,7 +11,6 @@ public class SocketClientListener extends Thread {
     private boolean connected;
     private final ArchiveRpository archiveRpository;
 
-
     public SocketClientListener(ArchiveRpository archiveRpository) {
         this.archiveRpository = archiveRpository;
         this.connected = false;
