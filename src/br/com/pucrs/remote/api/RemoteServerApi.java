@@ -14,10 +14,12 @@ public interface RemoteServerApi extends Remote {
 
     Optional<PeerConnection> getConnection(String peerName) throws RemoteException;
 
-    List<String> getPeerNamesForResource(String resourceName) throws RemoteException;
+    List<String> getPeerNamesForResource(PeerConnection requestConnection, String resourceName) throws RemoteException;
 
     boolean heartbeat(PeerConnection connection) throws RemoteException;
 
     boolean connect(PeerConnection connection, List<ResourceInfo> resourceInfo) throws RemoteException;
+
+    boolean disconnect(PeerConnection connection) throws RemoteException;
 
 }

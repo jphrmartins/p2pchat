@@ -10,13 +10,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ServerOperationsApi extends UnicastRemoteObject implements RemoteServerApi, Runnable {
+
+    private static final long serialVersion = 1L;
     private static final int TIME_TO_LEAVE_SECONDS = 10;
     private final Map<PeerConnection, List<ResourceInfo>> connections;
-    private final Map<PeerConnection, Integer> heartBeat;
+    private final Map<PeerConnection, Integer> heartBeatConnections;
 
     public ServerOperationsApi() throws RemoteException {
         this.connections = new HashMap<>();
-        this.heartBeat = new HashMap<>();
+        this.heartBeatConnections = new HashMap<>();
     }
 
     @Override
@@ -27,7 +29,7 @@ public class ServerOperationsApi extends UnicastRemoteObject implements RemoteSe
 
     @Override
     public List<ResourceInfo> search(PeerConnection peerConnection,
-                                                           String name) throws RemoteException {
+                                     String name) throws RemoteException {
         return getUniqueResources(peerConnection).stream()
                 .filter(it -> it.getFileName().startsWith(name))
                 .collect(Collectors.toList());
@@ -41,9 +43,11 @@ public class ServerOperationsApi extends UnicastRemoteObject implements RemoteSe
     }
 
     @Override
-    public List<String> getPeerNamesForResource(String resourceName) throws RemoteException {
+    public List<String> getPeerNamesForResource(PeerConnection requestConnection,
+                                                String resourceName) throws RemoteException {
         return connections.entrySet()
                 .stream()
+                .filter(connections -> !connections.getKey().equals(requestConnection))
                 .filter(entry -> {
                     List<ResourceInfo> resourceInfo = entry.getValue();
                     return resourceInfo.stream().anyMatch(it -> it.getFileName().equals(resourceName));
@@ -55,32 +59,43 @@ public class ServerOperationsApi extends UnicastRemoteObject implements RemoteSe
 
     @Override
     public boolean heartbeat(PeerConnection connection) throws RemoteException {
-        Optional<Integer> ttl = Optional.ofNullable(heartBeat.get(connection));
-        ttl.ifPresent(it -> heartBeat.put(connection, TIME_TO_LEAVE_SECONDS));
+        System.out.println("Recevied heartbeat of " + connection.toString());
+        Optional<Integer> ttl = Optional.ofNullable(heartBeatConnections.get(connection));
+        ttl.ifPresent(it -> heartBeatConnections.put(connection, TIME_TO_LEAVE_SECONDS));
         return ttl.isPresent();
     }
 
     @Override
     public boolean connect(PeerConnection connection, List<ResourceInfo> resourceInfo) throws RemoteException {
-        if (connections.containsKey(connection) || heartBeat.containsKey(connection)) {
+        if (connections.containsKey(connection) || heartBeatConnections.containsKey(connection)) {
             return false;
         } else {
-            heartBeat.put(connection, TIME_TO_LEAVE_SECONDS);
+            heartBeatConnections.put(connection, TIME_TO_LEAVE_SECONDS);
             connections.put(connection, resourceInfo);
             return true;
         }
     }
 
+    @Override
+    public boolean disconnect(PeerConnection connection) throws RemoteException {
+        if (!(connections.containsKey(connection) && heartBeatConnections.containsKey(connection))) {
+            return false;
+        }
+        connections.remove(connection);
+        heartBeatConnections.remove(connection);
+        return true;
+    }
+
     private Set<ResourceInfo> getUniqueResources(PeerConnection peerConnection) {
         return connections.entrySet()
                 .stream()
-                .filter(it -> it.getKey() != peerConnection)
+                .filter(it -> !it.getKey().equals(peerConnection))
                 .flatMap(it -> it.getValue().stream())
                 .collect(Collectors.toSet());
     }
 
     private void removeConnection(PeerConnection peerConnection) {
-        heartBeat.remove(peerConnection);
+        heartBeatConnections.remove(peerConnection);
         connections.remove(peerConnection);
     }
 
@@ -88,15 +103,23 @@ public class ServerOperationsApi extends UnicastRemoteObject implements RemoteSe
     public void run() {
         try {
             while (true) {
-                if (!heartBeat.isEmpty()) {
-                    heartBeat.forEach((peerConnection, ttl) -> {
+                if (!heartBeatConnections.isEmpty()) {
+                    String connectionsToBeat = heartBeatConnections.entrySet()
+                                    .stream().map(it -> "(" + it.getKey().getUserName() + " " + it.getValue() + ")")
+                                    .collect(Collectors.joining(", "));
+                    System.out.println("Running heartbeat for connections: " + connectionsToBeat);
+                    Set<Map.Entry<PeerConnection, Integer>> heartbeats = heartBeatConnections.entrySet();
+                    for (Map.Entry<PeerConnection, Integer> heartBeat :heartbeats) {
+                        PeerConnection peerConnection = heartBeat.getKey();
+                        Integer ttl = heartBeat.getValue();
                         if (ttl - 1 == 0) {
                             removeConnection(peerConnection);
                         } else {
-                            heartBeat.put(peerConnection, ttl - 1);
+                            heartBeatConnections.put(peerConnection, ttl - 1);
                         }
-                    });
+                    }
                 }
+                System.out.println("Will take a nap"); //@Todo remover
                 Thread.sleep(1000);
             }
         } catch (InterruptedException e) {

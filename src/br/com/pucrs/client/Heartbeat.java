@@ -9,15 +9,17 @@ public class Heartbeat extends Thread {
     private final PeerConnection peerConnection;
     private final RemoteServerApi remoteServerApi;
 
+    private boolean connected;
+
     public Heartbeat(RemoteServerApi remoteServerApi, PeerConnection peerConnection) {
         this.remoteServerApi = remoteServerApi;
         this.peerConnection = peerConnection;
+        this.connected = true;
     }
 
     public void run() {
-        while (true) {
+        while (connected) {
             try {
-                System.out.println("pulse heartbeat");
                 remoteServerApi.heartbeat(peerConnection);
                 Thread.sleep(3000);
             } catch (RemoteException | InterruptedException e) {
@@ -25,4 +27,9 @@ public class Heartbeat extends Thread {
             }
         }
     }
+
+    public void disconnect() {
+        connected = false;
+    }
+
 }

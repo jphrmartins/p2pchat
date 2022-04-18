@@ -35,11 +35,11 @@ public class SocketClientListener extends Thread {
             }
         }
         System.out.println("Connect on port " + port);
-        connected = true;
         OutputStream outputStream = null;
         BufferedReader inputStream = null;
+        connected = true;
         try {
-            while (true){
+            while (connected) {
                 byte[] archiveContent = new byte[0];
                 outputStream = socket.getOutputStream();
                 outputStream.flush();
@@ -59,7 +59,6 @@ public class SocketClientListener extends Thread {
                     outputStream.flush();
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -70,7 +69,6 @@ public class SocketClientListener extends Thread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 

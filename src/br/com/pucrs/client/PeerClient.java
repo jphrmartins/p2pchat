@@ -34,7 +34,6 @@ public class PeerClient {
         } else {
             throw new RuntimeException("Error trying to connect on remote server");
         }
-
     }
 
     private boolean connectOnRemoteServer() throws RemoteException {
@@ -65,9 +64,9 @@ public class PeerClient {
         do {
             System.out.print("##--               Menu              --##\n\n");
             System.out.print("|---------------------------------------|\n");
-            System.out.print("| 1 - Request resource list             |\n");
-            System.out.print("| 2 - Request resource list             |\n");
-            System.out.print("| 3 - Request resource from server      |\n");
+            System.out.print("| 1 - Request all resource list         |\n");
+            System.out.print("| 2 - Search resource on server         |\n");
+            System.out.print("| 3 - Get peer for resource             |\n");
             System.out.print("| 4 - Contact other peer                |\n");
             System.out.print("| 5 - Exit                              |\n");
             System.out.print("|---------------------------------------|\n");
@@ -80,9 +79,13 @@ public class PeerClient {
                     System.out.println("");
                     break;
                 case 2:
-                    requestResources();
+                    searchResourceOnServer();
                     break;
                 case 3:
+                    searchPeersForResource();
+                    break;
+                case 4:
+                    contactOtherPeer();
                     break;
                 case 5:
                     System.out.println("Disconectando cliente");
@@ -95,26 +98,57 @@ public class PeerClient {
         } while (opt != 5);
     }
 
-    private void disconnect() {
+    private void searchResourceOnServer() throws RemoteException {
+        System.out.println("Escreva o termo para fazer a pesquisa do seu arquivo: ");
+        String fileSearch = input.next();
+        List<ResourceInfo> resourceInfo = remoteServerApi.search(peerConnection, fileSearch);
+        if (!resourceInfo.isEmpty()) {
+            String resources = resourceInfo.stream()
+                    .map(it -> it.getFileName() + " " + it.getHash())
+                    .collect(Collectors.joining(", \n"));
+            System.out.println("Lista de recursos encontrados: ");
+            System.out.println(resources);
+        } else {
+            System.out.println("Nenhum recurso encontrado.");
+        }
+    }
 
+    private void disconnect() throws RemoteException {
+        boolean disconnected = remoteServerApi.disconnect(peerConnection);
+        if (disconnected) {
+            heartbeat.disconnect();
+            System.out.println("user disconnected");
+        } else {
+            System.out.println("User already disconnected");
+        }
     }
 
     public void requestResourcesList() throws RemoteException {
-        String allResources = remoteServerApi.listResources(peerConnection).stream()
-                .map(it -> it.getFileName() + " " + it.getHash())
-                .collect(Collectors.joining(",\n"));
+        Set<ResourceInfo> resourceInfo = remoteServerApi.listResources(peerConnection);
+        if (!resourceInfo.isEmpty()) {
+            String allResources = remoteServerApi.listResources(peerConnection).stream()
+                    .map(it -> it.getFileName() + " " + it.getHash())
+                    .collect(Collectors.joining(",\n"));
 
-        System.out.println("lista de todos os recursos disponível em rede: ");
-        System.out.println(allResources);
+            System.out.println("lista de todos os recursos disponível em rede: ");
+            System.out.println(allResources);
+        } else {
+            System.out.println("Nenhum recurso disponível");
+        }
     }
 
-    public void requestResources() throws RemoteException {
+    public void searchPeersForResource() throws RemoteException {
         System.out.println("Enter the resource name: ");
         String resourceName = input.next();
-        List<String> peerUserNames = remoteServerApi.getPeerNamesForResource(resourceName);
-        System.out.println("Segue lista de usuários que possui o recurso :" + resourceName);
-        String users = String.join(",\n", peerUserNames);
-        System.out.println(users);
+        List<String> peerUserNames = remoteServerApi.getPeerNamesForResource(peerConnection, resourceName);
+
+        if (!peerUserNames.isEmpty()) {
+            System.out.println("Segue lista de usuários que possui o recurso: " + resourceName);
+            String users = String.join(",\n", peerUserNames);
+            System.out.println(users);
+        } else {
+            System.out.println("Nenhum peer disponível para esse recurso");
+        }
     }
 
     public void contactOtherPeer() throws RemoteException {

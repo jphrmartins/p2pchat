@@ -1,6 +1,9 @@
 package br.com.pucrs.remote.api;
 
-public class PeerConnection {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class PeerConnection implements Serializable {
     private final String address;
     private final String port;
 
@@ -31,5 +34,20 @@ public class PeerConnection {
                 ", port='" + port + '\'' +
                 ", userName='" + userName + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PeerConnection that = (PeerConnection) o;
+        return Objects.equals(getAddress(), that.getAddress()) &&
+                Objects.equals(getPort(), that.getPort()) &&
+                Objects.equals(getUserName(), that.getUserName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getAddress(), getPort(), getUserName());
     }
 }
