@@ -21,7 +21,7 @@ public class Heartbeat extends Thread {
         while (connected) {
             try {
                 remoteServerApi.heartbeat(peerConnection);
-                Thread.sleep(3000);
+                Thread.sleep(15000);
             } catch (RemoteException | InterruptedException e) {
                 throw new RuntimeException(e);
             }

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class ServerOperationsApi extends UnicastRemoteObject implements RemoteServerApi, Runnable {
 
     private static final long serialVersion = 1L;
-    private static final int TIME_TO_LEAVE_SECONDS = 10;
+    private static final int TIME_TO_LEAVE_SECONDS = 30;
     private final Map<PeerConnection, List<ResourceInfo>> connections;
     private final Map<PeerConnection, Integer> heartBeatConnections;
 
@@ -119,7 +119,6 @@ public class ServerOperationsApi extends UnicastRemoteObject implements RemoteSe
                         }
                     }
                 }
-                System.out.println("Will take a nap"); //@Todo remover
                 Thread.sleep(1000);
             }
         } catch (InterruptedException e) {
