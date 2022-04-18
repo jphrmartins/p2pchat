@@ -6,9 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Optional;
 
 public class SocketClientRequest {
     private int port = 5001;
@@ -19,7 +17,7 @@ public class SocketClientRequest {
         this.connection = connection;
     }
 
-    public void getArchieve(String hashcode, String resourceName) {
+    public void getArchive(String hashcode, String resourceName) {
         boolean aux = true;
 
         while (aux) {

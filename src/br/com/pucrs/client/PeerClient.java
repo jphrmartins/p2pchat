@@ -4,7 +4,6 @@ import br.com.pucrs.remote.api.RemoteServerApi;
 import br.com.pucrs.remote.api.PeerConnection;
 import br.com.pucrs.remote.api.ResourceInfo;
 
-import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,7 +96,7 @@ public class PeerClient {
     }
 
     private void disconnect() {
-        remoteServerApi.disconnect()
+
     }
 
     public void requestResourcesList() throws RemoteException {
@@ -132,7 +131,7 @@ public class PeerClient {
 
         if (peer.isPresent()) {
             SocketClientRequest socketClientRequest = new SocketClientRequest(peer.get());
-            socketClientRequest.getArchieve(hashcode,resouceName);
+            socketClientRequest.getArchive(hashcode,resouceName);
         } else {
             System.out.println("Client " + username + " does not exists");
         }

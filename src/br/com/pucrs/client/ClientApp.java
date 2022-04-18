@@ -11,12 +11,12 @@ import java.rmi.RemoteException;
 public class ClientApp {
 
     public static void main(String[] args) throws MalformedURLException, NotBoundException, RemoteException, InterruptedException {
-        if (args.length != 4) {
+        if (args.length != 5) {
             System.out.println("Must pass the current name, localId, ServerIp and ServerPort");
-            System.out.println("Java ClientApp <userName> <LocalId> <ServerIp> <ServerPort>");
+            System.out.println("Java ClientApp <userName> <LocalId> <ServerIp> <ServerPort> <directoryOfFile>");
         }
         RemoteServerApi remoteServerApi = (RemoteServerApi) Naming.lookup("//" + args[2] + ":" + args[3] + "/Server");
-        ArchiveRpository archiveRpository = new ArchiveRpository(".");
+        ArchiveRpository archiveRpository = new ArchiveRpository(args[4]);
         SocketClientListener socketClientListener = new SocketClientListener(archiveRpository);
         socketClientListener.start();
         while (!socketClientListener.isConnected()) {
