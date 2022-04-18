@@ -4,6 +4,7 @@ import br.com.pucrs.remote.api.RemoteServerApi;
 import br.com.pucrs.remote.api.PeerConnection;
 import br.com.pucrs.remote.api.ResourceInfo;
 
+import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ public class PeerClient {
     private final PeerConnection peerConnection;
     private final Scanner input;
     private final ArchiveRpository archiveRpository;
+    private SocketClientRequest socketClientRequest;
 
     protected PeerClient(RemoteServerApi remoteServerApi, PeerConnection peerConnection,
                          Heartbeat heartbeat, ArchiveRpository archiveRpository) {
@@ -101,14 +103,19 @@ public class PeerClient {
         return String.join(",\n", peerUserNames);
     }
 
-    public void contactOtherPeer() {
-        String ip;
+    public void contactOtherPeer() throws RemoteException {
+        String username;
         String hashcode;
-        System.out.println("Enter the IP :");
-        ip = input.next();
+        System.out.println("Enter the peer username :");
+        username = input.next();
+        System.out.println("Enter the resource name: ");
+        String resouceName = input.next();
         System.out.println("Enter the hash code of the resource: ");
         hashcode = input.next();
 
+        socketClientRequest = new SocketClientRequest(remoteServerApi.getConnection(username));
+
+        socketClientRequest.getArchieve(hashcode,resouceName);
 
         /*@Todo contatar outro peer, deve ser passado o ip e a porta do peer e o hashcode do recurso que desejamos receber
         / passo é... dizer quem é o peer vai contatar (não o ip o username mesmo) Comando pode ser (3 julia hash)
@@ -116,6 +123,5 @@ public class PeerClient {
         / Abrir conexão pro peer e solicitar o hash
          */
     }
-
 
 }

@@ -5,14 +5,14 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 
-public class SocketClient extends Thread {
+public class SocketClientListener extends Thread {
     private int port = 5000;
     private Socket socket;
     private boolean connected;
     private final ArchiveRpository archiveRpository;
 
 
-    public SocketClient(ArchiveRpository archiveRpository) {
+    public SocketClientListener(ArchiveRpository archiveRpository) {
         this.archiveRpository = archiveRpository;
         this.connected = false;
     }
