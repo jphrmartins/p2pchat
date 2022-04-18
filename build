@@ -1,0 +1,3 @@
+mkdir -p out/
+javac -d ./out/ ./src/br/com/pucrs/remote/api/*.java ./src/br/com/pucrs/client/*.java ./src/br/com/pucrs/server/*.java
+

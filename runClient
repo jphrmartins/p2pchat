@@ -1,0 +1,2 @@
+cd out/
+java br.com.pucrs.client.ClientApp $1 $2 $3 $4 $5
