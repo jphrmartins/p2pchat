@@ -12,7 +12,7 @@ public interface RemoteServerApi extends Remote {
 
     List<ResourceInfo> search(PeerConnection peerConnection, String name) throws RemoteException;
 
-    Optional<PeerConnection> getConnection(String peerName) throws RemoteException;
+    PeerConnection getConnection(String peerName) throws RemoteException;
 
     List<String> getPeerNamesForResource(PeerConnection requestConnection, String resourceName) throws RemoteException;
 

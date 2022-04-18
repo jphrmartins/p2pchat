@@ -36,10 +36,11 @@ public class ServerOperationsApi extends UnicastRemoteObject implements RemoteSe
     }
 
     @Override
-    public Optional<PeerConnection> getConnection(String peerName) throws RemoteException {
+    public PeerConnection getConnection(String peerName) throws RemoteException {
         return connections.keySet().stream()
                 .filter(connection -> connection.getUserName().equals(peerName))
-                .findFirst();
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

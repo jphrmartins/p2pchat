@@ -35,18 +35,16 @@ public class SocketClientListener extends Thread {
             }
         }
         System.out.println("Connect on port " + port);
-        OutputStream outputStream = null;
-        BufferedReader inputStream = null;
+        ObjectOutputStream outputStream = null;
+        ObjectInputStream inputStream = null;
         connected = true;
         try {
             while (connected) {
                 Socket socket = serverSocket.accept();
                 byte[] archiveContent = new byte[0];
-                outputStream = socket.getOutputStream();
-                outputStream.flush();
-                inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                String hash = inputStream.readLine(); // <hashcode> <- pattern
-
+                outputStream = new ObjectOutputStream(socket.getOutputStream());
+                inputStream = new ObjectInputStream(socket.getInputStream());
+                String hash = (String) inputStream.readObject(); // <hashcode> <- pattern
                 try {
                     archiveContent = getFile(hash);
                 } catch (Exception e) {
@@ -54,9 +52,8 @@ public class SocketClientListener extends Thread {
                 }
 
                 if (archiveContent.length > 0) {
+                    System.out.println("Writing on output");
                     outputStream.write(archiveContent);
-                    outputStream.flush();
-                } else {
                     outputStream.flush();
                 }
                 System.out.println("Completed send the archive from the hash code " + hash);

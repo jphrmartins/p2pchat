@@ -144,10 +144,10 @@ public class PeerClient {
         System.out.println("Enter the hash code of the resource: ");
         hashcode = input.next();
 
-        Optional<PeerConnection> peer = remoteServerApi.getConnection(username);
+        PeerConnection peer = remoteServerApi.getConnection(username);
 
-        if (peer.isPresent()) {
-            SocketClientRequest socketClientRequest = new SocketClientRequest(peer.get(), archiveRpository);
+        if (peer != null) {
+            SocketClientRequest socketClientRequest = new SocketClientRequest(peer, archiveRpository);
             socketClientRequest.getArchive(hashcode,resouceName);
         } else {
             System.out.println("Client " + username + " does not exists");

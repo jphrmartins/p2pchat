@@ -4,6 +4,7 @@ import br.com.pucrs.remote.api.PeerConnection;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -24,39 +25,38 @@ public class SocketClientRequest {
         while (aux) {
             aux = false;
             try {
-                System.out.println("Will try to connect on port " + port );
-                socket = new Socket(connection.getAddress(), port);
+                System.out.println("Will try to connect on port " + connection );
+                socket = new Socket(connection.getAddress(), Integer.parseInt(connection.getPort()));
             } catch (Exception ignore) {
-                System.out.println("Port " + port + " Already on use, will try next");
-                aux = true;
-                port++;
+                System.out.println("Could not connect on connection " + connection);
+                System.out.println("Return fail");
+                return;
             }
         }
-        System.out.println("Connect on port " + port);
-        OutputStream outputStream = null;
-        BufferedReader inputStream = null;
+        System.out.println("Connect on connection " + connection);
+        ObjectOutputStream outputStream = null;
+        ObjectInputStream inputStream = null;
         try {
-            byte[] hashcodes = new byte[0];
-            hashcodes = hashcode.getBytes();
-            outputStream = socket.getOutputStream();
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.flush();
+            inputStream = new ObjectInputStream(socket.getInputStream());
 
-            if (hashcodes.length > 0) {
-                outputStream.write(hashcodes);
-                outputStream.flush();
-            } else {
-                outputStream.flush();
+            if (!hashcode.isEmpty()) {
+                outputStream.writeObject(hashcode);
             }
 
-            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String archive = inputStream.readLine(); // <archiveContent> <- pattern
+            byte[] archive = inputStream.readAllBytes(); // <archiveContent> <- pattern
 
             try {
-                Writer writer = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(archiveRpository.getDirectory() + "\\" + resourceName + ".txt"), "utf-8"));
-                writer.write(archive);
+                System.out.println("Received from input with size of: " + archive.length);
+                socket.close();
+                String fileDirectory = archiveRpository.getDirectory() + "/" + resourceName;
+                File fileToWrite = new File(fileDirectory);
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileToWrite)));
+                writer.write(new String(archive));
                 System.out.println("File received and saved successfully");
-
+                writer.flush();
+                writer.close();
             }catch (Exception ignored){
                 System.out.println("There were problems receiving the file");
             }
@@ -67,7 +67,6 @@ public class SocketClientRequest {
             try {
                 if (outputStream != null) outputStream.close();
                 if (inputStream != null) inputStream.close();
-                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
