@@ -108,8 +108,8 @@ public class ServerOperationsApi extends UnicastRemoteObject implements RemoteSe
                                     .stream().map(it -> "(" + it.getKey().getUserName() + " " + it.getValue() + ")")
                                     .collect(Collectors.joining(", "));
                     System.out.println("Running heartbeat for connections: " + connectionsToBeat);
-                    Set<Map.Entry<PeerConnection, Integer>> heartbeats = heartBeatConnections.entrySet();
-                    for (Map.Entry<PeerConnection, Integer> heartBeat :heartbeats) {
+                    Set<Map.Entry<PeerConnection, Integer>> heartbeats = new HashSet<>(heartBeatConnections.entrySet());
+                    for (Map.Entry<PeerConnection, Integer> heartBeat: heartbeats) {
                         PeerConnection peerConnection = heartBeat.getKey();
                         Integer ttl = heartBeat.getValue();
                         if (ttl - 1 == 0) {

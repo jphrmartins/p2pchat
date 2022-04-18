@@ -2,18 +2,21 @@ package br.com.pucrs.client;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 
 public class SocketClientListener extends Thread {
     private int port = 5000;
-    private Socket socket;
+    private ServerSocket serverSocket;
     private boolean connected;
+    private final String address;
     private final ArchiveRpository archiveRpository;
 
-    public SocketClientListener(ArchiveRpository archiveRpository) {
+    public SocketClientListener(ArchiveRpository archiveRpository, String address) {
         this.archiveRpository = archiveRpository;
         this.connected = false;
+        this.address = address;
     }
 
     @Override
@@ -27,7 +30,8 @@ public class SocketClientListener extends Thread {
             aux = false;
             try {
                 System.out.println("Will try to connect on port " + port );
-                socket = new Socket(InetAddress.getLocalHost().getHostAddress(), port);
+                InetAddress inetAddress = InetAddress.getByName(address);
+                serverSocket = new ServerSocket(port, 50, inetAddress);
             } catch (Exception ignore) {
                 System.out.println("Port " + port + " Already on use, will try next");
                 aux = true;
@@ -40,6 +44,7 @@ public class SocketClientListener extends Thread {
         connected = true;
         try {
             while (connected) {
+                Socket socket = serverSocket.accept();
                 byte[] archiveContent = new byte[0];
                 outputStream = socket.getOutputStream();
                 outputStream.flush();
@@ -65,7 +70,7 @@ public class SocketClientListener extends Thread {
             try {
                 if (outputStream != null) outputStream.close();
                 if (inputStream != null) inputStream.close();
-                socket.close();
+                serverSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

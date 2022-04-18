@@ -17,14 +17,15 @@ public class ClientApp {
         }
         RemoteServerApi remoteServerApi = (RemoteServerApi) Naming.lookup("//" + args[2] + ":" + args[3] + "/Server");
         ArchiveRpository archiveRpository = new ArchiveRpository(args[4]);
-        SocketClientListener socketClientListener = new SocketClientListener(archiveRpository);
-//        socketClientListener.start();
-//        while (!socketClientListener.isConnected()) {
-//            Thread.sleep(2000);
-//            System.out.println("Still not connect will sleep a little");
-//        }
-        String username = args[0];
         String currentIpAddress = args[1];
+        SocketClientListener socketClientListener = new SocketClientListener(archiveRpository, currentIpAddress);
+        socketClientListener.start();
+        while (!socketClientListener.isConnected()) {
+            System.out.println("Still not connect will sleep a little");
+            Thread.sleep(2000);
+        }
+        System.out.println("Connected");
+        String username = args[0];
         int port = socketClientListener.getPort();
         PeerConnection peerConnection = new PeerConnection(currentIpAddress, Integer.toString(port), username);
         Heartbeat heartbeat = new Heartbeat(remoteServerApi, peerConnection);
@@ -32,6 +33,5 @@ public class ClientApp {
 
         client.start(); // <- Not a thread. Just main loop on while...
         socketClientListener.interrupt();
-
     }
 }
